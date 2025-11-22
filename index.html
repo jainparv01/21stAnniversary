@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Anniversary — Mummy & Papa</title>
+  <style>
+    :root{
+      --bg1:#ffeef0; /* pale pink */
+      --bg2:#ffd1da; /* warmer */
+      --accent1:#d9306f; /* deep rose */
+      --accent2:#ff6f91; /* pink */
+      --muted:#6b4353;
+      --glass: rgba(255,255,255,0.6);
+      --card-radius:18px;
+      --max-width:1100px;
+      --shadow: 0 8px 30px rgba(0,0,0,0.12);
+      font-family: Inter, system-ui, -apple-system, 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    /* Reset */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      min-height:100%;
+      background: linear-gradient(135deg,var(--bg1),var(--bg2));
+      color:var(--muted);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;justify-content:center;padding:28px 18px;
+    }
+
+    .wrap{width:100%;max-width:var(--max-width);background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));border-radius:22px;box-shadow:var(--shadow);/* overflow removed to allow scrolling */}
+
+    /* Header with hamburger */
+    header{
+      display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid rgba(0,0,0,0.03);position:relative;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px;box-shadow:0 6px 18px rgba(217,48,111,0.18)
+    }
+    .title{font-size:18px;font-weight:600;color:var(--accent1)}
+
+    /* Hamburger */
+    .hamburger{margin-left:auto;background:transparent;border:0;padding:8px;border-radius:10px;cursor:pointer}
+    .hamburger:focus{outline:2px solid rgba(217,48,111,0.12)}
+    .hamburger .bar{width:28px;height:3px;background:var(--muted);display:block;border-radius:3px;margin:5px 0;transition:transform .28s ease, opacity .28s ease}
+
+    /* Side menu */
+    .side-menu{position:fixed;left:-340px;top:0;height:100vh;width:320px;background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.92));box-shadow:8px 0 40px rgba(0,0,0,0.12);padding:28px;border-right:1px solid rgba(0,0,0,0.04);transition:left .34s cubic-bezier(.2,.9,.28,1);z-index:60}
+    .side-menu.open{left:18px}
+    .side-menu h3{color:var(--accent1);margin-bottom:8px}
+    .navlist{list-style:none;margin-top:18px}
+    .navlist li{margin:14px 0}
+    .navlink{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;cursor:pointer;color:var(--muted);transition:background .2s,transform .12s}
+    .navlink:hover{background:rgba(255,111,145,0.08);transform:translateY(-3px)}
+
+    /* Dim overlay when menu open */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.28);opacity:0;pointer-events:none;transition:opacity .28s;z-index:50}
+    .overlay.show{opacity:1;pointer-events:auto}
+
+    /* Main content */
+    main{padding:28px 36px;display:grid;grid-template-columns:1fr;gap:28px}
+
+    /* Hero */
+    .hero{display:flex;flex-direction:column;align-items:center;gap:18px;padding:28px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.5));box-shadow:0 6px 30px rgba(217,48,111,0.06);position:relative;overflow:visible}
+    .hero .photo{width:160px;height:160px;border-radius:50%;overflow:hidden;border:8px solid rgba(255,255,255,0.9);box-shadow:0 12px 30px rgba(217,48,111,0.12);display:flex;align-items:center;justify-content:center;background:#fff}
+    .hero .photo img{width:100%;height:100%;object-fit:cover;display:block}
+    .hero h1{font-size:28px;color:var(--accent1);text-align:center;letter-spacing:0.2px;text-shadow:0 6px 20px rgba(255,111,145,0.18)}
+    .hero p{max-width:800px;text-align:center;color:#6b4353;opacity:0.95}
+
+    /* Glow ring */
+    .glow-ring{position:absolute;left:50%;transform:translateX(-50%);top:18px;width:360px;height:360px;border-radius:50%;filter:blur(36px);opacity:.12;background:radial-gradient(circle at 30% 30%, rgba(255,111,145,0.9), rgba(217,48,111,0.9) 30%, transparent 50%);pointer-events:none}
+
+    /* Sections */
+    .section{padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.7));box-shadow:0 8px 24px rgba(0,0,0,0.04)}
+    .section h2{color:var(--accent1);margin-bottom:8px}
+
+    /* Gallery Masonry */
+    .gallery{column-count:3;column-gap:14px}
+    .photo-card{break-inside:avoid;margin-bottom:14px;border-radius:12px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,0.06);transition:transform .28s}
+    .photo-card img{width:100%;display:block;height:auto}
+    .photo-card:hover{transform:translateY(-6px)}
+
+    /* Timeline */
+    .timeline{position:relative;padding-left:18px}
+    .timeline:before{content:'';position:absolute;left:12px;top:8px;bottom:8px;width:4px;background:linear-gradient(180deg,var(--accent2),var(--accent1));border-radius:6px}
+    .t-item{position:relative;padding:18px 12px;margin:14px 0;background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.75));border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.04);margin-left:38px}
+    .t-item .icon{position:absolute;left:-38px;top:14px;width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent1),var(--accent2));color:white;font-weight:700;box-shadow:0 8px 24px rgba(217,48,111,0.12)}
+    .t-item h3{font-size:16px;color:var(--accent1);margin-bottom:6px}
+    .t-item p{color:#5b3f49}
+
+    /* Message */
+    .message{font-size:15px;line-height:1.6;color:#5b3f49}
+    .message .from{margin-top:12px;font-weight:700;color:var(--accent1)}
+
+    /* Footer small */
+    footer{padding:12px 22px;text-align:center;color:#7a5260;font-size:13px}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .gallery{column-count:2}
+      .hero .photo{width:140px;height:140px}
+      .side-menu{left:-320px}
+      .side-menu.open{left:12px}
+    }
+    @media (max-width:560px){
+      body{padding:18px}
+      .gallery{column-count:1}
+      .hero h1{font-size:20px}
+      .wrap{border-radius:14px}
+      .navlink{padding:10px}
+      header{padding:12px}
+    }
+
+    /* subtle focus styles */
+    a:focus,button:focus{outline:3px solid rgba(217,48,111,0.08)}
+
+.modal {
+  display: none;
+  position: fixed;
+  left:0; top:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.55);
+  z-index: 200;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content {
+  background:white;
+  padding:20px;
+  width:90%;
+  max-width:600px;
+  border-radius:16px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.25);
+  animation: pop .3s ease;
+  max-height: 80vh;        /* Jitna screen ka height bacha hai */
+  overflow-y: auto;        /* Scroll enable */
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+
+@keyframes pop {
+  0% { transform: scale(0.8); opacity:0; }
+  100% { transform: scale(1); opacity:1; }
+}
+
+.modal-gallery {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+.modal-gallery img {
+  width:48%;
+  border-radius:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.open-modal {
+  margin-top:12px;
+  background: linear-gradient(135deg,var(--accent1),var(--accent2));
+  color:white;
+  border:0;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:14px;
+  box-shadow:0 4px 14px rgba(217,48,111,0.18);
+}
+
+.close {
+  float:right;
+  font-size:22px;
+  cursor:pointer;
+}
+
+
+  </style>
+</head>
+<body>
+
+<div id="tapScreen" 
+style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.45);        /* dark dim */
+backdrop-filter: blur(8px);         /* background blur */
+-webkit-backdrop-filter: blur(8px); /* safari support */
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:9999;
+font-family: 'Poppins', sans-serif;
+">
+
+  <div style="font-size:24px;color:white;font-weight:600;margin-bottom:12px;text-shadow:0 2px 6px rgba(0,0,0,0.25);">
+    Tap to Continue ❤️
+  </div>
+
+  <button id="startBtn" 
+  style="
+  padding:12px 24px;
+  font-size:16px;
+  background:linear-gradient(135deg,#d9306f,#ff6f91);
+  color:white;
+  border:0;
+  border-radius:16px;
+  cursor:pointer;
+  box-shadow:0 4px 16px rgba(217,48,111,0.35);
+  ">
+    Continue →
+  </button>
+
+</div>
+
+
+
+  <div class="wrap" role="document">
+    <header>
+      <div class="brand">
+        <div class="logo">💗</div>
+        <div>
+          <div class="title">Happy Anniversary</div>
+          <div style="font-size:12px;color:#7a5260">Mummy & Papa — A small gift from Parv</div>
+        </div>
+      </div>
+
+      <button class="hamburger" id="menuBtn" aria-label="Open menu" title="Open menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <!-- Cute Music Toggle Button -->
+<button id="musicToggle" 
+style="
+margin-left:12px;
+background:linear-gradient(135deg,var(--accent1),var(--accent2));
+border:0;
+color:white;
+padding:10px 16px;
+border-radius:14px;
+cursor:pointer;
+font-size:14px;
+box-shadow:0 6px 16px rgba(217,48,111,0.22);
+transition:0.25s;
+">
+🎵 Music Off
+</button>
+
+    </header>
+
+    <!-- Side sliding menu -->
+    <nav class="side-menu" id="sideMenu" aria-hidden="true">
+      <h3>Menu</h3>
+      <ul class="navlist">
+        <li><div class="navlink" data-target="hero">🏠 Home</div></li>
+        <li><div class="navlink" data-target="gallery">📸 Gallery</div></li>
+        <li><div class="navlink" data-target="timeline">🕰️ Timeline</div></li>
+        <li><div class="navlink" data-target="message">💌 Message</div></li>
+      </ul>
+
+      <div style="margin-top:22px;font-size:13px;color:#6b4353">Tip: Tap any menu item to jump to that section.</div>
+
+    </nav>
+
+    <div class="overlay" id="overlay" tabindex="-1"></div>
+
+    <main>
+      <!-- Hero -->
+      <section id="hero" class="hero section">
+        <div class="glow-ring" aria-hidden="true"></div>
+        <div class="photo" aria-hidden="true">
+          <!-- Replace 'images/parents.jpg' with your real photo file -->
+          <img src="images/2.jpg" alt="Mummy and Papa" id="heroPhoto">
+        </div>
+        <h1 id="heroTitle">Happy 21st Anniversary Mummy & Papa ❤️</h1>
+        <p id="heroSub">Aap dono mere liye sab kuch ho - meri strength, mera support aur meri sabse badi khushi.</p>
+      </section>
+
+      <!-- Gallery -->
+      <section id="gallery" class="section">
+        <h2>Beautiful Memories Together</h2>
+        <div class="gallery" id="galleryGrid">
+          <!-- 10+ image placeholders -->
+          <div class="photo-card"><img src="images/8.jpg" alt="Memory 1"></div>
+          <div class="photo-card"><img src="images/2.jpg" alt="Memory 2"></div>
+          <div class="photo-card"><img src="images/12.jpg" alt="Memory 3"></div>
+          <div class="photo-card"><img src="images/20.jpg" alt="Memory 4"></div>
+          <div class="photo-card"><img src="images/5.jpg" alt="Memory 5"></div>
+          <div class="photo-card"><img src="images/3.jpg" alt="Memory 6"></div>
+          <div class="photo-card"><img src="images/6.jpg" alt="Memory 7"></div>
+          <div class="photo-card"><img src="images/22.jpg" alt="Memory 8"></div>
+          <div class="photo-card"><img src="images/21.jpg" alt="Memory 9"></div>
+          <!-- <div class="photo-card"><img src="images/4.jpg" alt="Memory 10"></div> -->
+          <!-- add more if you like -->
+        </div>
+      </section>
+
+      <!-- Timeline -->
+      <section id="timeline" class="section">
+        <h2>Your Journey Together</h2>
+        <div class="timeline" id="timelineList" aria-live="polite">
+
+            <article class="t-item">
+  <div class="icon">💍</div>
+  <h3>Shaadi</h3>
+  <p>Ek khoobsurat journey ki shuruaat.</p>
+
+  <button class="open-modal" data-modal="modal-shaadi">📸 View Photos</button>
+</article>
+
+<div class="modal" id="modal-shaadi">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+
+    <h2>Shaadi Ke Moments</h2>
+    <p>Shaadi ki kuch khoobsurat yaadein.</p>
+
+    <div class="modal-gallery">
+      <img src="images/23.jpg">
+      <!-- <img src="images/shaadi2.jpg">
+      <img src="images/shaadi3.jpg"> -->
+    </div>
+  </div>
+</div>
+
+
+          <article class="t-item">
+  <div class="icon">👶</div>
+  <h3>First Baby - Parv</h3>
+  <p>Ghar me pehli baar choti si khushi aayi.</p>
+
+  <button class="open-modal" data-modal="modal-parv-baby">📸 View Photos</button>
+</article>
+
+<div class="modal" id="modal-parv-baby">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+
+    <h2>Parv Ka Janam 💕</h2>
+    <p>Jab ghar me pehli baar ek chhoti si muskaan aayi.</p>
+
+    <div class="modal-gallery">
+      <img src="images/26.jpg">
+      <img src="images/25.jpg">
+    </div>
+  </div>
+</div>
+
+
+       <article class="t-item">
+  <div class="icon">❤️</div>
+  <h3>Journey Moments</h3>
+  <p>Kuch yaadgaar pal.</p>
+
+  <button class="open-modal" data-modal="modal-journey">📸 View Photos</button>
+</article>
+
+<div class="modal" id="modal-journey">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+
+    <h2>Journey Moments</h2>
+    <p>Kuch special moments 😍</p>
+
+    <div class="modal-gallery">
+      <img src="images/27.jpg">
+      <img src="images/28.jpg">
+      <img src="images/29.jpg">
+      <img src="images/30.jpg">
+      <img src="images/31.jpg">
+      <img src="images/32.jpg">
+    </div>
+  </div>
+</div>
+
+
+          <article class="t-item">
+  <div class="icon">👶</div>
+  <h3>Second Baby</h3>
+  <p>Parivaar me ek aur khushi aayi.</p>
+
+  <button class="open-modal" data-modal="modal-second-baby">📸 View Photos</button>
+</article>
+
+<div class="modal" id="modal-second-baby">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+
+    <h2>Second Baby – Memories</h2>
+    <p>Parivaar me ek aur khushi aayi.</p>
+
+    <div class="modal-gallery">
+      <img src="images/40.jpg">
+      <img src="images/41.jpg">
+      <img src="images/36.jpg">
+      <img src="images/39.jpg">
+      <img src="images/38.jpg">
+      <img src="images/43.jpg">
+    </div>
+  </div>
+</div>
+
+
+          <article class="t-item">
+  <div class="icon">✨</div>
+  <h3>Moments Till Now</h3>
+  <p>And The Beautiful Journey Ahead...</p>
+
+  <button class="open-modal" data-modal="modal-till-now">📸 View Photos</button>
+</article>
+
+<div class="modal" id="modal-till-now">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+
+    <h2>Moments Till Now</h2>
+    <p>Aap dono ka safar aise hi hasta hua and isse bhi jyada khubsurat ho. </p>
+
+    <div class="modal-gallery">
+      <img src="images/33.jpg">
+      <img src="images/34.jpg">
+      <img src="images/35.jpg">
+      <img src="images/44.jpg">
+      <img src="images/45.jpg">
+      <img src="images/46.jpg">
+      <img src="images/47.jpg">
+      <img src="images/48.jpg">
+      <img src="images/49.jpg">
+      <img src="images/50.jpg">
+      <img src="images/51.jpg">
+      <img src="images/52.jpg">
+      <img src="images/1.jpg">
+      <img src="images/54.jpg">
+      <img src="images/53.jpg">
+      <img src="images/14.jpg">
+    </div>
+  </div>
+</div>
+
+
+        </div>
+      </section>
+
+      <!-- Message -->
+      <section id="message" class="section">
+        <h2>Special Message from Parv</h2>
+        <div class="message">
+          <p>Mummy Papa,</p>
+          <p>Aap dono mere liye sirf parents nahi, ek perfect team ho bikul dost jaise jisse mai kuch bhi share kar sakta hu. Aapka pyaar, aapka support, aur aapki bonding mere liye hamesha inspiration rahi hai. Jo sacrifices, jo mehnat aur jo values aapne mujhe di hain, woh meri zindagi ka sabse bada gift hai.</p>
+          <p>Mai sirf itna kehna chahta hoon — I love you both soo muchhh ❤️, Aap dono hamesha khush raho, healthy raho, aur saath mai haste raho.</p>
+
+          <div class="from">— Parv</div>
+        </div>
+      </section>
+
+      <footer>
+        Made with ❤️ by Parv — Happy Anniversary!
+      </footer>
+    </main>
+  </div>
+
+
+  
+  <script>
+    // Menu open/close
+    const menuBtn = document.getElementById('menuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('overlay');
+    menuBtn.addEventListener('click', ()=>{
+      const open = sideMenu.classList.toggle('open');
+      sideMenu.setAttribute('aria-hidden', !open);
+      overlay.classList.toggle('show', open);
+      // animate hamburger bars
+      menuBtn.classList.toggle('active');
+    });
+    overlay.addEventListener('click', ()=>{ sideMenu.classList.remove('open'); overlay.classList.remove('show'); menuBtn.classList.remove('active'); sideMenu.setAttribute('aria-hidden', true); });
+
+    // Smooth navigation from side menu
+    document.querySelectorAll('.navlink').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const target = document.getElementById(el.dataset.target);
+        if(target) target.scrollIntoView({behavior:'smooth',block:'center'});
+        sideMenu.classList.remove('open'); overlay.classList.remove('show'); menuBtn.classList.remove('active');
+      })
+    })
+
+    // Simple lightbox for gallery
+    document.querySelectorAll('.photo-card img').forEach(img=>{
+      img.style.cursor='pointer';
+      img.addEventListener('click', ()=>{
+        openLightbox(img.src, img.alt);
+      })
+    })
+
+    function openLightbox(src, alt){
+      const dim = document.createElement('div');
+      dim.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:120';
+      const box = document.createElement('div');
+      box.style.cssText = 'max-width:92%;max-height:92%;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);background:#111';
+      const im = document.createElement('img');
+      im.src=src; im.alt=alt; im.style.cssText='display:block;max-width:100%;max-height:80vh;object-fit:contain';
+      const cap = document.createElement('div');
+      cap.textContent = alt || '';
+      cap.style.cssText='padding:10px 14px;color:#fff;background:rgba(0,0,0,0.45);font-size:14px;text-align:center'
+      box.appendChild(im); box.appendChild(cap); dim.appendChild(box);
+      dim.addEventListener('click', (e)=>{ if(e.target===dim) document.body.removeChild(dim); });
+      document.body.appendChild(dim);
+    }
+
+    // Simple hearts particle canvas (subtle)
+    (function(){
+      const cvs = document.createElement('canvas');
+      cvs.style.position='fixed';cvs.style.left=0;cvs.style.top=0;cvs.style.pointerEvents='none';cvs.style.zIndex=20;document.body.appendChild(cvs);
+      const ctx = cvs.getContext('2d');let W, H, particles=[];
+      function setSize(){W=window.innerWidth;H=window.innerHeight;cvs.width=W;cvs.height=H}
+      setSize();window.addEventListener('resize', setSize);
+      function rand(a,b){return a+Math.random()*(b-a)}
+      function make(){
+        const x=rand(0,W);const y=H+20;const s=rand(6,18);const vx=rand(-0.6,0.6);const vy=rand(-3.2,-1.2);const hue=rand(330,350);
+        particles.push({x,y,vx,vy,s,alpha:1,hue});
+      }
+      for(let i=0;i<10;i++) make();
+      setInterval(()=>{ if(Math.random()<0.45) make(); if(particles.length>180) particles.splice(0,20); }, 700);
+      function drawHeart(x,y,s,alpha,hue){
+        ctx.save();ctx.translate(x,y);ctx.scale(s/20,s/20);ctx.globalAlpha=alpha;ctx.fillStyle=`hsl(${hue},85%,60%)`;
+        ctx.beginPath();ctx.moveTo(0,-6);ctx.bezierCurveTo(6,-22,34,-18,34,2);ctx.bezierCurveTo(34,20,18,34,0,46);ctx.bezierCurveTo(-18,34,-34,20,-34,2);ctx.bezierCurveTo(-34,-18,-6,-22,0,-6);ctx.fill();ctx.restore();
+      }
+      function tick(){ctx.clearRect(0,0,W,H);for(let i=0;i<particles.length;i++){const p=particles[i];p.x+=p.vx;p.y+=p.vy;p.vy+=0.03;p.alpha-=0.002; if(p.alpha<=0){particles.splice(i,1);i--;continue} drawHeart(p.x,p.y,p.s,p.alpha,p.hue);} requestAnimationFrame(tick)}
+      tick();
+    })();
+
+    // Accessibility: keyboard nav for menu
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){ sideMenu.classList.remove('open'); overlay.classList.remove('show'); menuBtn.classList.remove('active'); sideMenu.setAttribute('aria-hidden', true); }
+    })
+
+    // Helpful note: if images are missing, replace with a fallback
+    document.querySelectorAll('img').forEach(img=>{
+      img.addEventListener('error', ()=>{
+        img.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="%23ffdfe6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23b6382f" font-family="Arial, sans-serif" font-size="22">Replace /images/xxx.jpg</text></svg>'
+      })
+    })
+
+document.querySelectorAll(".open-modal").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const m = document.getElementById(btn.dataset.modal);
+    m.style.display = "flex";
+    document.body.classList.add("no-scroll");   // ❗ scroll lock
+  });
+});
+
+document.querySelectorAll(".modal .close").forEach(c => {
+  c.addEventListener("click", () => {
+    c.parentElement.parentElement.style.display = "none";
+    document.body.classList.remove("no-scroll"); // ❗ scroll unlock
+  });
+});
+
+// Click outside to close
+document.querySelectorAll(".modal").forEach(m => {
+  m.addEventListener("click", e => {
+    if (e.target === m) {
+      m.style.display = "none";
+      document.body.classList.remove("no-scroll"); // ❗ scroll unlock
+    }
+  });
+});
+
+
+  </script>
+
+<!-- Background Music -->
+  <audio id="bgMusic" src="music/song.mp3" autoplay loop muted></audio>
+<script>
+const music = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("musicToggle");
+let isPlaying = false;
+
+const tapScreen = document.getElementById("tapScreen");
+const startBtn = document.getElementById("startBtn");
+
+// First tap → unlock audio + start music + remove screen
+startBtn.addEventListener("click", () => {
+    // Remove welcome screen
+    tapScreen.style.display = "none";
+
+    // Start music safely (now browser cannot block)
+    music.muted = false;
+    music.play().then(() => {
+        isPlaying = true;
+        toggleBtn.innerHTML = "🔊 Music On";
+    });
+});
+
+// Button toggle logic
+toggleBtn.addEventListener("click", () => {
+    if (!isPlaying) {
+        music.muted = false;
+        music.play();
+        isPlaying = true;
+        toggleBtn.innerHTML = "🔊 Music On";
+    } else {
+        music.pause();
+        isPlaying = false;
+        toggleBtn.innerHTML = "🎵 Music Off";
+    }
+});
+</script>
+
+</body>
+</html>
